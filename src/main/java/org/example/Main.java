@@ -4,14 +4,15 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+
 public class Main {
     public static void main(String[] args) throws IOException {
 
         Timer myTimer = new Timer();
         AdminHelper adminHelper = new AdminHelper();
         TestCase test1 = new TestCase();
+        RabbitMQApiTest rabbitMQApiTest=new RabbitMQApiTest();
+        RabbitMQApiTestGet rabbitMQApiTestGet=new RabbitMQApiTestGet();
         TimerTask myTask = new TimerTask() {
             // ANSI escape code for bold text
             String ANSI_BOLD = "\u001B[1m";
@@ -22,12 +23,16 @@ public class Main {
             public void run() {
                 // Print the current date and time
                 System.out.println(ANSI_BOLD + "Current Date and Time : " + adminHelper.currentDateAndTime() + ANSI_RESET);
-                test1.postRequest();
-                test1.postRequestToken();
-                test1.putRequest();
-                test1.getRequestCurrentAccount();
+                test1.postRequestToCreateUserNameAndPassword();
+                test1.postRequestToCreateToken();
+                test1.putRequestNotificationService();
+                test1.putRequestToAddAccountDetails();
+                test1.getRequestCurrentAccountDetails();
                 test1.getRequestAccountsDemo();
                 test1.getRequest();
+                test1.getRequestNotificationService();
+                rabbitMQApiTest.RabbitMQApiTestPublishMessage();
+                rabbitMQApiTestGet.RabbitMQApiTestGetMessagePost();
             }
         };
 

@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
-import java.io.IOException;
+
 import java.util.Random;
 
 public class TestCase {
@@ -22,7 +22,7 @@ public class TestCase {
 
 
     @Test
-    public void postRequest() {
+    public void postRequestToCreateUserNameAndPassword() {
         try {
             //Specify Base URL
             RestAssured.baseURI = "https://demo-app.stackinsights.ai/";
@@ -62,7 +62,7 @@ public class TestCase {
         }
     }
     @Test(priority = 1)
-    public void postRequestToken() {
+    public void postRequestToCreateToken() {
         try {
             // Specify Base URL
             RestAssured.baseURI = "https://demo-app.stackinsights.ai";
@@ -99,8 +99,38 @@ public class TestCase {
         }
     }
 
+    @Test(priority = 2,invocationCount = 10)
+    public void putRequestNotificationService() {
+        try {
+            //Specify Base URL
+            RestAssured.baseURI = "https://demo-app.stackinsights.ai/";
+
+            //Request Object
+            RequestSpecification httpRequestSpecification = RestAssured.given();
+
+            // Set headers if required
+            httpRequestSpecification.header("Content-Type", "application/json");
+
+            httpRequestSpecification.auth().oauth2(authorizationToken);
+            String Name=username;
+            String email = "abc"+Math.random()+"@gmail.com";
+            boolean active = true;
+            String frequency = "MONTHLY";
+            String requestBody = "{\"accountName\":\""+Name+"\",\"email\":\"" + email + "\",\"scheduledNotifications\":{\"REMIND\":{\"active\":" + active + ",\"frequency\":\"" + frequency + "\"}}}";
+
+            httpRequestSpecification.body(requestBody);
+
+            //Response Object
+            response = httpRequestSpecification.request(Method.PUT, "notifications/recipients/current");
+            softAssert.assertEquals(response.getStatusCode(), 200);
+            System.out.println("putRequestNotificationService"+" Run");
+            softAssert.assertAll();
+        } catch (AbstractMethodError e) {
+            e.printStackTrace();
+        }
+    }
     @Test(priority = 2)
-    public void putRequest() {
+    public void putRequestToAddAccountDetails() {
         try {
             //Specify Base URL
             RestAssured.baseURI = "https://demo-app.stackinsights.ai/";
@@ -113,75 +143,7 @@ public class TestCase {
 
             httpRequestSpecification.auth().oauth2(authorizationToken);
 
-          /*  jsonFile = "regression\\Record.json";
-            JSONObject testDataProducts = readJsonFile.readNestedJsonFile(jsonFile);*/
-
-            httpRequestSpecification.body("{\n" +
-                    "  \"note\": \"Test1\",\n" +
-                    "  \"incomes\":\n" +
-                    "  [{\n" +
-                    "      \"title\": \"TestAuto1\",\n" +
-                    "      \"icon\": \"wallet\",\n" +
-                    "      \"currency\": \"USD\",\n" +
-                    "      \"period\": \"MONTH\",\n" +
-                    "      \"amount\": \"100000\",\n" +
-                    "      \"converted\": \"1000.000\"\n" +
-                    "    },{\n" +
-                    "    \"title\": \"TestAuto2\",\n" +
-                    "    \"icon\": \"wallet\",\n" +
-                    "    \"currency\": \"USD\",\n" +
-                    "    \"period\": \"MONTH\",\n" +
-                    "    \"amount\": \"100000\",\n" +
-                    "    \"converted\": \"1000.000\"\n" +
-                    "  },{\n" +
-                    "    \"title\": \"TestAuto3\",\n" +
-                    "    \"icon\": \"wallet\",\n" +
-                    "    \"currency\": \"USD\",\n" +
-                    "    \"period\": \"MONTH\",\n" +
-                    "    \"amount\": \"100000\",\n" +
-                    "    \"converted\": \"1000.000\"\n" +
-                    "  }],\n" +
-                    "  \"expenses\":[\n" +
-                    "    {\n" +
-                    "      \"title\": \"Test1\",\n" +
-                    "      \"icon\": \"cart\",\n" +
-                    "      \"currency\": \"USD\",\n" +
-                    "      \"period\": \"MONTH\",\n" +
-                    "      \"amount\": \"1000\",\n" +
-                    "      \"converted\": \"1000.000\"\n" +
-                    "    },\n" +
-                    "    {\n" +
-                    "      \"title\": \"Test2\",\n" +
-                    "      \"icon\": \"cart\",\n" +
-                    "      \"currency\": \"USD\",\n" +
-                    "      \"period\": \"MONTH\",\n" +
-                    "      \"amount\": \"1000\",\n" +
-                    "      \"converted\": \"1000.000\"\n" +
-                    "    },\n" +
-                    "    {\n" +
-                    "      \"title\": \"Test3\",\n" +
-                    "      \"icon\": \"cart\",\n" +
-                    "      \"currency\": \"USD\",\n" +
-                    "      \"period\": \"MONTH\",\n" +
-                    "      \"amount\": \"1000\",\n" +
-                    "      \"converted\": \"1000.000\"\n" +
-                    "    },\n" +
-                    "    {\n" +
-                    "      \"title\": \"Test4\",\n" +
-                    "      \"icon\": \"cart\",\n" +
-                    "      \"currency\": \"USD\",\n" +
-                    "      \"period\": \"MONTH\",\n" +
-                    "      \"amount\": \"1000\",\n" +
-                    "      \"converted\": \"1000.000\"\n" +
-                    "    }],\n" +
-                    "  \"saving\": {\n" +
-                    "    \"amount\": 100,\n" +
-                    "    \"capitalization\": true,\n" +
-                    "    \"deposit\": true,\n" +
-                    "    \"currency\": \"USD\",\n" +
-                    "    \"interest\": \"0\"\n" +
-                    "  }\n" +
-                    "}");
+            httpRequestSpecification.body("{\"note\":\"Test1\",\"incomes\":[{\"title\":\"TestAuto1\",\"icon\":\"wallet\",\"currency\":\"USD\",\"period\":\"MONTH\",\"amount\":\"100000\",\"converted\":\"1000.000\"},{\"title\":\"TestAuto2\",\"icon\":\"wallet\",\"currency\":\"USD\",\"period\":\"MONTH\",\"amount\":\"100000\",\"converted\":\"1000.000\"},{\"title\":\"TestAuto3\",\"icon\":\"wallet\",\"currency\":\"USD\",\"period\":\"MONTH\",\"amount\":\"100000\",\"converted\":\"1000.000\"}],\"expenses\":[{\"title\":\"Test1\",\"icon\":\"cart\",\"currency\":\"USD\",\"period\":\"MONTH\",\"amount\":\"1000\",\"converted\":\"1000.000\"},{\"title\":\"Test2\",\"icon\":\"cart\",\"currency\":\"USD\",\"period\":\"MONTH\",\"amount\":\"1000\",\"converted\":\"1000.000\"},{\"title\":\"Test3\",\"icon\":\"cart\",\"currency\":\"USD\",\"period\":\"MONTH\",\"amount\":\"1000\",\"converted\":\"1000.000\"},{\"title\":\"Test4\",\"icon\":\"cart\",\"currency\":\"USD\",\"period\":\"MONTH\",\"amount\":\"1000\",\"converted\":\"1000.000\"}],\"saving\":{\"amount\":100,\"capitalization\":true,\"deposit\":true,\"currency\":\"USD\",\"interest\":\"0\"}}\n");
 
             //Response Object
             response = httpRequestSpecification.request(Method.PUT, "accounts/current");//200
@@ -192,10 +154,8 @@ public class TestCase {
             e.printStackTrace();
         }
     }
-
-
     @Test(priority = 3)
-    public void getRequestCurrentAccount() {
+    public void getRequestCurrentAccountDetails() {
         try {
             //Specify Base URL
             RestAssured.baseURI = "https://demo-app.stackinsights.ai";
@@ -206,7 +166,7 @@ public class TestCase {
             //Response Object
             response = httpReuestRequestSpecification.request(Method.GET, "/accounts/current");
             softAssert.assertEquals(response.getStatusCode(), 200);
-            //System.out.println("Get Body: " + response.getBody().asString());
+
             System.out.println("getRequestCurrentAccount"+" Run");
             softAssert.assertAll();
         } catch (AbstractMethodError e) {
@@ -247,7 +207,6 @@ public class TestCase {
             //Response Object
             response = httpReuestRequestSpecification.request(Method.GET, "/");
             softAssert.assertEquals(response.getStatusCode(), 200);
-            //System.out.println("Get Body: " + response.getBody().asString());
             System.out.println("getRequest"+" Run");
             softAssert.assertAll();
         } catch (AbstractMethodError e) {
@@ -255,4 +214,23 @@ public class TestCase {
         }
     }
 
+    @Test(priority = 3)
+    public void getRequestNotificationService() {
+        try {
+            //Specify Base URL
+            RestAssured.baseURI = "https://demo-app.stackinsights.ai";
+            //Request Object
+            RequestSpecification httpReuestRequestSpecification = RestAssured.given();
+            httpReuestRequestSpecification.auth().oauth2(authorizationToken);
+
+            //Response Object
+            response = httpReuestRequestSpecification.request(Method.GET, "notifications/recipients/current");
+            softAssert.assertEquals(response.getStatusCode(), 200);
+            //System.out.println("Get Body: " + response.getBody().asString());
+            System.out.println(response.getBody().asString());
+            softAssert.assertAll();
+        } catch (AbstractMethodError e) {
+            e.printStackTrace();
+        }
+    }
 }
